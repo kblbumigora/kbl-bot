@@ -1,24 +1,40 @@
 var express = require('express');
 var axios = require('axios');
 var bodyParser = require('body-parser');
-var FeedParser = require('feedparser');
 var xml2json = require('xml2json');
+
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const API_URL = "https://api.telegram.org/bot" + TELEGRAM_TOKEN;
 
 var app = express();
 app.use(express.static('public'));
 
-var req = axios.get('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/')
-  .then(function (response) {
-    //console.log(response.data);
-    var jsonFeed = xml2json.toJson(response.data);
-    var feed = JSON.parse(jsonFeed);
-    var item = feed.rss.channel.item;
-    var title
-    console.dir(item[0].title);
-});
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+
+function getInfoKampus(){
+
+}
 
 
 app.post("/", function(request, response) {
+  var input = request.body;
+  
+  var message = input.message;
+  if (message.text == '/info_kampus'){
+  
+  }
+  
+  
+  axios({
+  method: 'post',
+    url: API_URL + '/sendMessage',
+    data: {
+      'chat_id': input.message.chat.id,
+      'text': 'Anda mengirim: ' + input.message.text
+    }
+  });
   
 });
 
