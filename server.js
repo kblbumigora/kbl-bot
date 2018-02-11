@@ -4,8 +4,7 @@ var bodyParser = require('body-parser');
 var xml2json = require('xml2json');
 var moment = require('moment');
 
-const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const API_URL = "https://api.telegram.org/bot" + TELEGRAM_TOKEN;
+const API_URL = "https://api.telegram.org/bot" + process.env.TELEGRAM_BOT_TOKEN;
 
 var app = express();
 app.use(express.static('public'));
@@ -14,7 +13,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 // Global variabel untuk menampung message dari telegram
-var message = "";
+//var message = "";
 
 
 function infoKampus(message){
@@ -31,8 +30,9 @@ function infoKampus(message){
       moment.locale('id'); // gunakan bahasa indonesia untuk momentjs
       var dateAgo = moment(date, "YYYYMMDD").fromNow();
       message.text += `<a href="${item[i].link}">${item[i].title}</a>  (${dateAgo})<br/>`;
+      sendMessage(message);
     }
-    sendMessage(message);
+    
   })
   .catch(function (error) {
     console.log(`Terjadi masalah: ${error}`);
@@ -40,6 +40,8 @@ function infoKampus(message){
 }
 
 function sendMessage(message, parse='HTML'){
+  console.dir(message.chat.id);
+  
   axios({
   method: 'post',
     url: API_URL + '/sendMessage',
@@ -59,9 +61,12 @@ app.post("/", function(request, response) {
   var input = request.body;
   
   var message = input.message;
+  
   if (message.text == '/info_kampus'){
       infoKampus(message);
-  }  
+  }
+  
+  sendMessage("apa kabar!");
   
 });
 
