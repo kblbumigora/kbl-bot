@@ -25,16 +25,17 @@ function infoKampus(message){
     var feed = JSON.parse(jsonFeed);
     var item = feed.rss.channel.item;
     
-    message.text = '';
+    
     for(let i = 0; i < 5; i++){
-      //console.log(item[i].link);
       var date = new Date(item[i].pubDate);
       moment.locale('id'); // gunakan bahasa indonesia untuk momentjs
       var dateAgo = moment(date, "YYYYMMDD").fromNow();
       message.text += `<a href="${item[i].link}">${item[i].title}</a>  (${dateAgo})<br/>`;
     }
     sendMessage(message);
-    //console.dir(item[0].title);
+  })
+  .catch(function (error) {
+    console.log(`Terjadi masalah: ${error}`);
   });
 }
 
@@ -47,6 +48,10 @@ function sendMessage(message, parse='HTML'){
       'text': message.text,
       'parse_mode': parse
     }
+  }).catch(function (error) {
+    //console.log(API_URL + '/sendMessage');
+    //console.log( message.chat.id );
+    console.log(`Terjadi masalah: ${error}`);
   });
 }
 
