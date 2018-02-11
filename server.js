@@ -1,9 +1,10 @@
-var express = require('express');
+var express = require('express'); // express framework
 var axios = require('axios'); // modul untuk melakukan HTTP Request
-var bodyParser = require('body-parser'); // mod
-var xml2json = require('xml2json');
-var moment = require('moment');
+var bodyParser = require('body-parser'); // modul untuk parse body
+var xml2json = require('xml2json'); // modul untuk mengubah XML menjadi JSON
+var moment = require('moment'); // Modul untuk manipulasi waktu
 
+// URL yang digunakan untuk kirim pesan ke Telegram
 const API_URL = "https://api.telegram.org/bot" + process.env.TELEGRAM_BOT_TOKEN;
 
 var app = express();
@@ -12,8 +13,6 @@ app.use(express.static('public'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-// Global variabel untuk menampung message dari telegram
-//var message = "";
 
 /*
   Fungsi untuk mengambil RSS Feed dari website kampus lalu mengirimnya ke Bot
@@ -61,6 +60,9 @@ function sendMessage(message, parse='HTML'){
   });
 }
 
+/*
+  Semua pesan dari telegram akan diterima dari route ini
+*/
 app.post("/", function(request, response) {
   var input = request.body;
   
@@ -79,14 +81,6 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-
-
-// Simple in-memory store for now
-// var dreams = [
-//   "Find and count some sheep",
-//   "Climb a really tall mountain",
-//   "Wash the dishes"
-// ];
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
