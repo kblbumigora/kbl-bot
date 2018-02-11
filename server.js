@@ -16,23 +16,45 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 // Global variabel untuk menampung message dari telegram
 var message = "";
 
-
-function infoKampus(message){
-  var req = axios.get('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/')
+// Ambil item dari RSS Feed dan kembalikan dalam bentuk JSON array
+function getFeedItem(url){
+  var req = axios.get(url)
   .then(function (response) {
     //console.log(response.data);
     var jsonFeed = xml2json.toJson(response.data);
     var feed = JSON.parse(jsonFeed);
-    var item = feed.rss.channel.item;
-    for(let i = 0; i < 5; i++){
-      //console.log(item[i].link);
-      var date = new Date(item[i].pubDate);
-      var dateAgo = moment(date, "YYYYMMDD").fromNow();
-      message.text = `${item[i].title}  ${item[i].link}  (${dateAgo})`;
-      sendMessage(message);
-    }
-    //console.dir(item[0].title);
+    return feed.rss.channel.item;
   });
+}
+
+
+function infoKampus(message){
+  // var req = axios.get('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/')
+  // .then(function (response) {
+  //   //console.log(response.data);
+  //   var jsonFeed = xml2json.toJson(response.data);
+  //   var feed = JSON.parse(jsonFeed);
+  //   var item = feed.rss.channel.item;
+  //   for(let i = 0; i < 5; i++){
+  //     //console.log(item[i].link);
+  //     var date = new Date(item[i].pubDate);
+  //     moment.locale('id'); // gunakan bahasa indonesia untuk momentjs
+  //     var dateAgo = moment(date, "YYYYMMDD").fromNow();
+  //     message.text = `${item[i].title}  ${item[i].link}  (${dateAgo})`;
+  //     sendMessage(message);
+  //   }
+  //   //console.dir(item[0].title);
+  // });
+  
+  var infoKampus = getFeedItem('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/');
+  for(let i = 0; i < 5; i++){
+      //console.log(item[i].link);
+      var date = new Date(infoKampus[i].pubDate);
+      moment.locale('id'); // gunakan bahasa indonesia untuk momentjs
+      var dateAgo = moment(date, "YYYYMMDD").fromNow();
+      message.text = `${infoKampus[i].title}  ${infoKampus[i].link}  (${dateAgo})`;
+      sendMessage(message);
+  }
 }
 
 function sendMessage(message){
