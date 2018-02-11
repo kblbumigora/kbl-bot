@@ -1,6 +1,6 @@
 var express = require('express');
-var axios = require('axios');
-var bodyParser = require('body-parser');
+var axios = require('axios'); // modul untuk melakukan HTTP Request
+var bodyParser = require('body-parser'); // mod
 var xml2json = require('xml2json');
 var moment = require('moment');
 
@@ -15,7 +15,9 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 // Global variabel untuk menampung message dari telegram
 //var message = "";
 
-
+/*
+  Fungsi untuk mengambil RSS Feed dari website kampus lalu mengirimnya ke Bot
+*/
 function infoKampus(message){
   var req = axios.get('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/')
   .then(function (response) {
@@ -24,14 +26,13 @@ function infoKampus(message){
     var feed = JSON.parse(jsonFeed);
     var item = feed.rss.channel.item;
     
-    
     for(let i = 0; i < 5; i++){
       var date = new Date(item[i].pubDate);
       moment.locale('id'); // gunakan bahasa indonesia untuk momentjs
       var dateAgo = moment(date, "YYYYMMDD").fromNow();
-      message.text += `<a href="${item[i].link}">${item[i].title}</a>  (${dateAgo})<br/>`;
-      sendMessage(message);
-    }
+      message.text = `<a href="${item[i].link}">${item[i].title}</a>  (${dateAgo})`;
+      sendMessage(message);  
+    }    
     
   })
   .catch(function (error) {
@@ -39,9 +40,12 @@ function infoKampus(message){
   });
 }
 
+/*
+  Fungsi untuk mengirim pesan ke Telegram
+  Parameter: message adalah objek dari message yang berisi { chat: {id: balas ke id ini}, text: "text yang akan dikirim" }
+  parameter: parse adalah format string yang digunakan default-nya HTML. Bisa uga menggunakan markdown
+*/
 function sendMessage(message, parse='HTML'){
-  console.dir(message.chat.id);
-  
   axios({
   method: 'post',
     url: API_URL + '/sendMessage',
