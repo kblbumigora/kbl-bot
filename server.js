@@ -2,28 +2,20 @@ var express = require('express');
 var axios = require('axios');
 var bodyParser = require('body-parser');
 var FeedParser = require('feedparser');
+var xml2json = require('xml2json');
 
 var app = express();
 app.use(express.static('public'));
 
 var req = axios.get('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/')
   .then(function (response) {
-    //console.log(response);
-    var feedparser = new FeedParser();
-    
-    response.data.pipe(feedparser);
-
-    feedparser.on('readable', function () {
-      // This is where the action is!
-      var stream = this; // `this` is `feedparser`, which is a stream
-      var meta = this.meta; // **NOTE** the "meta" is always available in the context of the feedparser instance
-      var item;
-
-      while (item = stream.read()) {
-        console.log(item);
-      }
-    });
-  });
+    //console.log(response.data);
+    var jsonFeed = xml2json.toJson(response.data);
+    var feed = JSON.parse(jsonFeed);
+    var item = feed.rss.channel.item;
+    var title
+    console.dir(item[0].title);
+});
 
 
 app.post("/", function(request, response) {
