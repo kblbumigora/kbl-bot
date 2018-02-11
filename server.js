@@ -2,6 +2,7 @@ var express = require('express');
 var axios = require('axios');
 var bodyParser = require('body-parser');
 var xml2json = require('xml2json');
+var moment = require('moment');
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API_URL = "https://api.telegram.org/bot" + TELEGRAM_TOKEN;
@@ -24,11 +25,10 @@ function infoKampus(message){
     var feed = JSON.parse(jsonFeed);
     var item = feed.rss.channel.item;
     for(let i = 0; i < 5; i++){
-      
       //console.log(item[i].link);
       var date = new Date(item[i].pubDate);
       var dateAgo = moment(date, "YYYYMMDD").fromNow();
-      message.text = "("+ dateAgo +") " + item[i].title + " " + item[i].link;
+      message.text = `${item[i].title}  ${item[i].link}  (${dateAgo})`;
       sendMessage(message);
     }
     //console.dir(item[0].title);
