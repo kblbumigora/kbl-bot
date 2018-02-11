@@ -12,29 +12,45 @@ app.use(express.static('public'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+// Global variabel untuk menampung message dari telegram
+var message = "";
 
-function getInfoKampus(){
 
+function infoKampus(message){
+  var req = axios.get('http://website.stmikbumigora.ac.id/index.php/category/pengumuman/feed/')
+  .then(function (response) {
+    //console.log(response.data);
+    var jsonFeed = xml2json.toJson(response.data);
+    var feed = JSON.parse(jsonFeed);
+    var item = feed.rss.channel.item;
+    for(let i = 0; i < 5; i++){
+      console.log(item[i].title);
+      //console.log(item[i].link);
+      message.text = "("+ item[i].pubDate +") " + item[i].title + " " + item[i].link;
+      sendMessage(message);
+    }
+    //console.dir(item[0].title);
+  });
 }
 
+function sendMessage(message){
+  axios({
+  method: 'post',
+    url: API_URL + '/sendMessage',
+    data: {
+      'chat_id': message.chat.id,
+      'text': message.text
+    }
+  });
+}
 
 app.post("/", function(request, response) {
   var input = request.body;
   
   var message = input.message;
   if (message.text == '/info_kampus'){
-  
-  }
-  
-  
-  axios({
-  method: 'post',
-    url: API_URL + '/sendMessage',
-    data: {
-      'chat_id': input.message.chat.id,
-      'text': 'Anda mengirim: ' + input.message.text
-    }
-  });
+      infoKampus(message);
+  }  
   
 });
 
