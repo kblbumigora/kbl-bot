@@ -68,6 +68,8 @@ app.post("/", function(request, response) {
   
   var message = input.message;
   
+  console.dir(message);
+  
   if (message.text == '/info_kampus'){
       infoKampus(message);
   }
