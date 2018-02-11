@@ -24,9 +24,11 @@ function infoKampus(message){
     var feed = JSON.parse(jsonFeed);
     var item = feed.rss.channel.item;
     for(let i = 0; i < 5; i++){
-      console.log(item[i].title);
+      
       //console.log(item[i].link);
-      message.text = "("+ item[i].pubDate +") " + item[i].title + " " + item[i].link;
+      var date = new Date(item[i].pubDate);
+      var dateAgo = moment(date, "YYYYMMDD").fromNow();
+      message.text = "("+ dateAgo +") " + item[i].title + " " + item[i].link;
       sendMessage(message);
     }
     //console.dir(item[0].title);
