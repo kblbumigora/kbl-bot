@@ -42,7 +42,7 @@ function infoKampus(message){
 /*
   Fungsi untuk mengirim pesan ke Telegram
   Parameter: message adalah objek dari message yang berisi { chat: {id: balas ke id ini}, text: "text yang akan dikirim" }
-  parameter: parse adalah format string yang digunakan default-nya HTML. Bisa uga menggunakan markdown
+  parameter: parse adalah format string yang digunakan default-nya HTML. Bisa juga menggunakan markdown
 */
 function sendMessage(message, parse='HTML'){
   axios({
