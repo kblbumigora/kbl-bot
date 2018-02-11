@@ -30,7 +30,7 @@ function infoKampus(message){
       moment.locale('id'); // gunakan bahasa indonesia untuk momentjs
       var dateAgo = moment(date, "YYYYMMDD").fromNow();
       message.text = `<a href="${item[i].link}">${item[i].title}</a>  (${dateAgo})`;
-      sendMessage(message);  
+      sendMessage(message);
     }    
     
   })
@@ -72,7 +72,8 @@ app.post("/", function(request, response) {
       infoKampus(message);
   }
   
-  sendMessage("apa kabar!");
+  message.text = "Apa kabar?";
+  sendMessage(message);
   
 });
 
